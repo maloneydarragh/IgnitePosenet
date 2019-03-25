@@ -1,20 +1,3 @@
-/**
- * @license
- * Copyright 2018 Google Inc. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * =============================================================================
- */
-
 import * as tf from '@tensorflow/tfjs';
 import {ModelWeights} from './model_weights';
 
@@ -127,34 +110,17 @@ type Layer = {
   rate: number
 };
 
-/**
- * Takes a mobilenet architectures' convolution definitions and converts them
- * into definitions for convolutional layers that will generate outputs with the
- * desired output stride. It does this by reducing the input stride in certain
- * layers and applying atrous convolution in subsequent layers. Raises an error
- * if the output stride is not possible with the architecture.
- */
 function toOutputStridedLayers(
     convolutionDefinition: ConvolutionDefinition[],
     outputStride: OutputStride): Layer[] {
-  // The currentStride variable keeps track of the output stride of
-  // the activations, i.e., the running product of convolution
-  // strides up to the current network layer. This allows us to
-  // invoke atrous convolution whenever applying the next
-  // convolution would result in the activations having output
-  // stride larger than the target outputStride.
   let currentStride = 1;
 
-  // The atrous convolution rate parameter.
-  let rate = 1;
+    let rate = 1;
 
   return convolutionDefinition.map(([convType, stride], blockId): Layer => {
     let layerStride, layerRate;
 
     if (currentStride === outputStride) {
-      // If we have reached the target outputStride, then we need to
-      // employ atrous convolution with stride=1 and multiply the atrous
-      // rate by the current unit's stride for use in subsequent layers.
       layerStride = 1;
       layerRate = rate;
       rate *= stride;
