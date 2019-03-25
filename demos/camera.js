@@ -4,8 +4,8 @@ import Stats from 'stats.js';
 
 import {drawBoundingBox, drawKeypoints, drawSkeleton} from './demo_util';
 
-const videoWidth = 600;
-const videoHeight = 500;
+const videoWidth = 1000;
+const videoHeight = 700;
 const stats = new Stats();
 
 function isAndroid() {
