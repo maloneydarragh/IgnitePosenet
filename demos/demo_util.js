@@ -19,12 +19,12 @@ export function drawPoint(ctx, y, x, r, color) {
 /**
  * Draws a line on a canvas, i.e. a joint
  */
-export function drawSegment([ay, ax], [by, bx], color, scale, ctx) {
+export function drawSegment([ay, ax], [by, bx], colorr, scale, ctx) {
   ctx.beginPath();
   ctx.moveTo(ax * scale, ay * scale);
   ctx.lineTo(bx * scale, by * scale);
   ctx.lineWidth = lineWidth;
-  ctx.strokeStyle = color;
+  ctx.strokeStyle = colorr;
   ctx.stroke();
 }
 

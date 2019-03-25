@@ -1,12 +1,13 @@
 import * as posenet from '@tensorflow-models/posenet';
-import dat from 'dat.gui';
 import Stats from 'stats.js';
 
 import {drawBoundingBox, drawKeypoints, drawSkeleton} from './demo_util';
 
-const videoWidth = 1000;
-const videoHeight = 700;
+const videoWidth = 1200;
+const videoHeight = 800;
 const stats = new Stats();
+var leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
@@ -94,78 +95,6 @@ function setupGui(cameras, net) {
   if (cameras.length > 0) {
     guiState.camera = cameras[0].deviceId;
   }
-
-  const gui = new dat.GUI({width: 300});
-
-  // The single-pose algorithm is faster and simpler but requires only one
-  // person to be in the frame or results will be innaccurate. Multi-pose works
-  // for more than 1 person
-  const algorithmController =
-      gui.add(guiState, 'algorithm', ['single-pose', 'multi-pose']);
-
-  // The input parameters have the most effect on accuracy and speed of the
-  // network
-  let input = gui.addFolder('Input');
-  // Architecture: there are a few PoseNet models varying in size and
-  // accuracy. 1.01 is the largest, but will be the slowest. 0.50 is the
-  // fastest, but least accurate.
-  const architectureController = input.add(
-      guiState.input, 'mobileNetArchitecture',
-      ['1.01', '1.00', '0.75', '0.50']);
-  // Output stride:  Internally, this parameter affects the height and width of
-  // the layers in the neural network. The lower the value of the output stride
-  // the higher the accuracy but slower the speed, the higher the value the
-  // faster the speed but lower the accuracy.
-  input.add(guiState.input, 'outputStride', [8, 16, 32]);
-  // Image scale factor: What to scale the image by before feeding it through
-  // the network.
-  input.add(guiState.input, 'imageScaleFactor').min(0.2).max(1.0);
-  input.open();
-
-  // Pose confidence: the overall confidence in the estimation of a person's
-  // pose (i.e. a person detected in a frame)
-  // Min part confidence: the confidence that a particular estimated keypoint
-  // position is accurate (i.e. the elbow's position)
-  let single = gui.addFolder('Single Pose Detection');
-  single.add(guiState.singlePoseDetection, 'minPoseConfidence', 0.0, 1.0);
-  single.add(guiState.singlePoseDetection, 'minPartConfidence', 0.0, 1.0);
-
-  let multi = gui.addFolder('Multi Pose Detection');
-  multi.add(guiState.multiPoseDetection, 'maxPoseDetections')
-      .min(1)
-      .max(20)
-      .step(1);
-  multi.add(guiState.multiPoseDetection, 'minPoseConfidence', 0.0, 1.0);
-  multi.add(guiState.multiPoseDetection, 'minPartConfidence', 0.0, 1.0);
-  // nms Radius: controls the minimum distance between poses that are returned
-  // defaults to 20, which is probably fine for most use cases
-  multi.add(guiState.multiPoseDetection, 'nmsRadius').min(0.0).max(40.0);
-  multi.open();
-
-  let output = gui.addFolder('Output');
-  output.add(guiState.output, 'showVideo');
-  output.add(guiState.output, 'showSkeleton');
-  output.add(guiState.output, 'showPoints');
-  output.add(guiState.output, 'showBoundingBox');
-  output.open();
-
-
-  architectureController.onChange(function(architecture) {
-    guiState.changeToArchitecture = architecture;
-  });
-
-  algorithmController.onChange(function(value) {
-    switch (guiState.algorithm) {
-      case 'single-pose':
-        multi.close();
-        single.open();
-        break;
-      case 'multi-pose':
-        single.close();
-        multi.open();
-        break;
-    }
-  });
 }
 
 /**
@@ -227,7 +156,7 @@ function detectPoseInRealTime(video, net) {
             guiState.multiPoseDetection.maxPoseDetections,
             guiState.multiPoseDetection.minPartConfidence,
             guiState.multiPoseDetection.nmsRadius);
-            console.log('Poses:', poses);
+            // console.log('Poses:', poses);
         minPoseConfidence = +guiState.multiPoseDetection.minPoseConfidence;
         minPartConfidence = +guiState.multiPoseDetection.minPartConfidence;
         break;
@@ -242,10 +171,6 @@ function detectPoseInRealTime(video, net) {
       ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
       ctx.restore();
     }
-
-      console.log("************** POSES: *******************");
-      console.log("****  poses count: " + poses.length);
-      console.log(poses);
 
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
@@ -262,9 +187,6 @@ function detectPoseInRealTime(video, net) {
        */
       var personArray = [];
 
-
-
-
       poses.forEach(({score, keypoints}) => {
           if (score >= minPoseConfidence) {
               if (guiState.output.showPoints) {
@@ -275,7 +197,7 @@ function detectPoseInRealTime(video, net) {
                   //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
                   let colorrr = checkIfSomeoneHasFallen(keypoints);
 
-                  drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
+                  drawSkeleton(colorrr,keypoints, minPartConfidence, ctx);
                   index++;
 
                   //** AOS log out keypoints before they are drawn
@@ -303,39 +225,28 @@ function detectPoseInRealTime(video, net) {
     poseDetectionFrame();
 }
 
-//initial value
-var nosePosition = 0;
-
 //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
 function checkIfSomeoneHasFallen(keypoints){
-    //track nose y position
-    if (keypoints[1].part === "leftEye"){
-        //console.log("** Yes, it's a eye, I concur");
-
-        if (nosePosition === 0) {
-            console.log("SETTING leftEyePosition");
-            nosePosition = keypoints[1].position.y;
-        }else{
-            console.log(" saved: " + nosePosition + " , current " + keypoints[1].position.y);
-            if (nosePosition > keypoints[1].position.y){
-                console.log("***** Y value is greater of eye ****");
-                nosePosition = keypoints[1].position.y;
-                return 'red';
-            }else{
-                nosePosition = keypoints[1].position.y;
-                return 'green';
-            }
-        }
-    }else{
-        console.log("** No, no nose, I knows");
+  const leftShoulder = keypoints[5];
+  const rightShoulder = keypoints[6];
+  if(leftShoulder.score > 0.1) {
+    // console.log('left shoulder is detected');
+    leftShoulderArray = leftShoulderArray.slice(1);
+    leftShoulderArray = leftShoulderArray.concat(leftShoulder.position.y);
+    if(leftShoulderArray[9]-leftShoulderArray[0]>200 && leftShoulderArray[0] !== 0){
+      return 'red';
     }
-}
+  }
+  else if(rightShoulder.score > 0.1) {
+    // console.log('right shoulder is detected');
+    rightShoulderArray = rightShoulderArray.slice(1);
+    rightShoulderArray = rightShoulderArray.concat(rightShoulder.position.y);
+    if(rightShoulderArray[9]-rightShoulderArray[0]>200 && rightShoulderArray[0] !==0){
+      return 'red';
+    }
+  }
 
-
-function getNoseToKneeRatio(keypoints){
-
-    //get the distance/ratio between nose and knee - if it reduces by more than a threshold /  time it may indicate a fall
-
+  return 'green';
 }
 
 /**
@@ -362,7 +273,7 @@ export async function bindPage() {
   }
 
   setupGui([], net);
-  setupFPS();
+  // setupFPS();
   detectPoseInRealTime(video, net);
 }
 
