@@ -243,30 +243,99 @@ function detectPoseInRealTime(video, net) {
       ctx.restore();
     }
 
-    // For each pose (i.e. person) detected in an image, loop through the poses
-    // and draw the resulting skeleton and keypoints if over certain confidence
-    // scores
-    poses.forEach(({score, keypoints}) => {
-      if (score >= minPoseConfidence) {
-        if (guiState.output.showPoints) {
-          drawKeypoints(keypoints, minPartConfidence, ctx);
-        }
-        if (guiState.output.showSkeleton) {
-          drawSkeleton(keypoints, minPartConfidence, ctx);
-        }
-        if (guiState.output.showBoundingBox) {
-          drawBoundingBox(keypoints, ctx);
-        }
-      }
-    });
+      console.log("************** POSES: *******************");
+      console.log("****  poses count: " + poses.length);
+      console.log(poses);
 
-    // End monitoring code for frames per second
-    stats.end();
+      // For each pose (i.e. person) detected in an image, loop through the poses
+      // and draw the resulting skeleton and keypoints if over certain confidence
+      // scores
 
-    requestAnimationFrame(poseDetectionFrame);
+      var  index = 0;
+
+      //array of colors, so each person has a different color
+      var colors = ['orange','purple','blue','green','white','pink','brown','black'];
+
+
+      /*
+          need to keep track of individuals, so need to keep track of x position of certain keypoints
+       */
+      var personArray = [];
+
+
+
+
+      poses.forEach(({score, keypoints}) => {
+          if (score >= minPoseConfidence) {
+              if (guiState.output.showPoints) {
+                  drawKeypoints(keypoints, minPartConfidence, ctx);
+              }
+              if (guiState.output.showSkeleton) {
+
+                  //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
+                  let colorrr = checkIfSomeoneHasFallen(keypoints);
+
+                  drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
+                  index++;
+
+                  //** AOS log out keypoints before they are drawn
+                  //console.log("** keypoints: 0: " + keypoints[0].position.x + "," + + keypoints[0].position.y + "," + keypoints[0].part + "," + keypoints[0].score);
+                  /*console.log("** keypoints:" + keypoints[1].position.x + "," + + keypoints[1].position.y + "," + keypoints[1].part + "," + keypoints[1].score);
+                  console.log("** keypoints:" + keypoints[2].position.x + "," + + keypoints[2].position.y + "," + keypoints[2].part + "," + keypoints[2].score);
+                  console.log("** keypoints:" + keypoints[3].position.x + "," + + keypoints[3].position.y + "," + keypoints[3].part + "," + keypoints[3].score);
+                  console.log("** keypoints:" + keypoints[4].position.x + "," + + keypoints[4].position.y + "," + keypoints[4].part + "," + keypoints[4].score);
+                  console.log("** keypoints:" + keypoints[5].position.x + "," + + keypoints[5].position.y + "," + keypoints[5].part + "," + keypoints[5].score);
+                  console.log("** keypoints:" + keypoints[6].position.x + "," + + keypoints[6].position.y + "," + keypoints[6].part + "," + keypoints[6].score);*/
+                  //**
+              }
+              if (guiState.output.showBoundingBox) {
+                  drawBoundingBox(keypoints, ctx);
+              }
+          }
+      });
+
+      // End monitoring code for frames per second
+      stats.end();
+
+      requestAnimationFrame(poseDetectionFrame);
   }
 
-  poseDetectionFrame();
+    poseDetectionFrame();
+}
+
+//initial value
+var nosePosition = 0;
+
+//check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
+function checkIfSomeoneHasFallen(keypoints){
+    //track nose y position
+    if (keypoints[1].part === "leftEye"){
+        //console.log("** Yes, it's a eye, I concur");
+
+        if (nosePosition === 0) {
+            console.log("SETTING leftEyePosition");
+            nosePosition = keypoints[1].position.y;
+        }else{
+            console.log(" saved: " + nosePosition + " , current " + keypoints[1].position.y);
+            if (nosePosition > keypoints[1].position.y){
+                console.log("***** Y value is greater of eye ****");
+                nosePosition = keypoints[1].position.y;
+                return 'red';
+            }else{
+                nosePosition = keypoints[1].position.y;
+                return 'green';
+            }
+        }
+    }else{
+        console.log("** No, no nose, I knows");
+    }
+}
+
+
+function getNoseToKneeRatio(keypoints){
+
+    //get the distance/ratio between nose and knee - if it reduces by more than a threshold /  time it may indicate a fall
+
 }
 
 /**
