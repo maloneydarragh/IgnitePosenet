@@ -1,7 +1,7 @@
 import * as posenet from '@tensorflow-models/posenet';
 import Stats from 'stats.js';
 
-import {drawBoundingBox, drawKeypoints, drawSkeleton} from './demo_util';
+import {drawBoundingBox, drawKeypoints, drawPersonTag, drawSkeleton} from './demo_util';
 
 const videoWidth = 1200;
 const videoHeight = 800;
@@ -137,6 +137,7 @@ function detectPoseInRealTime(video, net) {
     let poses = [];
     let minPoseConfidence;
     let minPartConfidence;
+
     switch (guiState.algorithm) {
       case 'single-pose':
         const pose = await guiState.net.estimateSinglePose(
@@ -188,7 +189,9 @@ function detectPoseInRealTime(video, net) {
       var personArray = [];
 
       poses.forEach(({score, keypoints}) => {
+
           if (score >= minPoseConfidence) {
+              drawPersonTag(colors[index],keypoints, ctx, index);
               if (guiState.output.showPoints) {
                   drawKeypoints(keypoints, minPartConfidence, ctx);
               }

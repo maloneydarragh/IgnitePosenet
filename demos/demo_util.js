@@ -16,6 +16,13 @@ export function drawPoint(ctx, y, x, r, color) {
   ctx.fill();
 }
 
+export function showPersonTag(ctx, y, x, color, index) {
+  ctx.beginPath();
+  ctx.fillStyle = color;
+  ctx.font = "15px Arial";
+  ctx.fillText('Person ' + index, x, y);
+}
+
 /**
  * Draws a line on a canvas, i.e. a joint
  */
@@ -56,6 +63,12 @@ export function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
     const {y, x} = keypoint.position;
     drawPoint(ctx, y * scale, x * scale, 3, color);
   }
+}
+
+export function drawPersonTag(colorr, keypoints, ctx, index) {
+    var x = keypoints[5].position.x<keypoints[6].position.x ? keypoints[5].position.x : keypoints[6].position.x;
+    var y = (keypoints[5].position.y+keypoints[6].position.y)/2;
+    showPersonTag(ctx, y, x, colorr, index+1);
 }
 
 /**

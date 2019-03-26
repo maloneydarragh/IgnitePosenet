@@ -1,7 +1,7 @@
 import * as posenet from '@tensorflow-models/posenet';
 import Stats from 'stats.js';
 
-import {drawBoundingBox, drawKeypoints, drawSkeleton} from './demo_util';
+import {drawBoundingBox, drawKeypoints, drawPersonTag, drawSkeleton} from './demo_util';
 
 const videoWidth = 600;
 const videoHeight = 500;
@@ -190,6 +190,7 @@ function detectPoseInRealTime(video, net) {
 
         poses.forEach(({score, keypoints}) => {
             if (score >= minPoseConfidence) {
+                drawPersonTag(colors[index],keypoints, ctx, index);
             if (guiState.output.showPoints) {
                 drawKeypoints(keypoints, minPartConfidence, ctx);
             }
