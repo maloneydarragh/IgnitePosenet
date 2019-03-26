@@ -293,6 +293,7 @@ function detectPoseInRealTime(video, net) {
                               drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
                           }else{
                               drawSkeleton('red',keypoints, minPartConfidence, ctx);
+                              document.getElementById("alertAudio").play();
                           }
 
 
@@ -305,6 +306,7 @@ function detectPoseInRealTime(video, net) {
                               drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
                           }else{
                               drawSkeleton('red',keypoints, minPartConfidence, ctx);
+                              document.getElementById("alertAudio").play();
                           }
                       }
                   }
