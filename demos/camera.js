@@ -240,19 +240,15 @@ function detectPoseInRealTime(video, net) {
 
 //add alert to screen by appending HTML
 function addAlert(){
-
     if (alertTimer === 0) {
         var currentdate = new Date();
         var datetime = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/" + currentdate.getFullYear() + " " + currentdate.getHours() + ":"  + currentdate.getMinutes() + ":"  + currentdate.getSeconds();
-
         var div = document.createElement('div');
-
         div.innerHTML =
             '<div class="alert-panel"><h4>Someone has fallen</h4>' + datetime + '</div>';
         document.getElementById('alerts').appendChild(div);
-        alertTimer = 5;
+        alertTimer = timerInterval;
         myVar = setInterval(myTimer, 1000);
-
     }
 }
 
