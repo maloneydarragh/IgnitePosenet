@@ -289,11 +289,6 @@ function checkIfValueWithinRange(firstValue, secondValue, range){
     }
 }
 
-function getNoseToKneeRatio(keypoints){
-
-    //get the distance/ratio between nose and knee - if it reduces by more than a threshold /  time it may indicate a fall
-
-}
 
 /**
  * Kicks off the demo by loading the posenet model, finding and loading
@@ -318,6 +313,7 @@ export async function bindPage() {
     throw e;
   }
 
+  setupGui([], net);
   detectPoseInRealTime(video, net);
 }
 
