@@ -27,6 +27,11 @@ toastr.options = {
     "hideMethod": "fadeOut"
 };
 
+//for the timer to limit falling alert to one every 5 seconds
+var alertTimer = 0;
+var myVar;
+var timerInterval = 5;
+
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
@@ -236,14 +241,28 @@ function detectPoseInRealTime(video, net) {
 //add alert to screen by appending HTML
 function addAlert(){
 
-    var currentdate = new Date();
-    var datetime = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/" + currentdate.getFullYear() + " " + currentdate.getHours() + ":"  + currentdate.getMinutes() + ":"  + currentdate.getSeconds();
+    if (alertTimer === 0) {
+        var currentdate = new Date();
+        var datetime = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/" + currentdate.getFullYear() + " " + currentdate.getHours() + ":"  + currentdate.getMinutes() + ":"  + currentdate.getSeconds();
 
-    var div = document.createElement('div');
+        var div = document.createElement('div');
 
-    div.innerHTML =
-        '<div class="alert-panel"><h4>Someone has fallen</h4>' + datetime + '</div>';
-    document.getElementById('alerts').appendChild(div);
+        div.innerHTML =
+            '<div class="alert-panel"><h4>Someone has fallen</h4>' + datetime + '</div>';
+        document.getElementById('alerts').appendChild(div);
+        alertTimer = 5;
+        myVar = setInterval(myTimer, 1000);
+
+    }
+}
+
+function myTimer() {
+    if (alertTimer > 0) {
+        alertTimer--;
+    }
+    if (alertTimer === 0) {
+        clearInterval(myVar);
+    }
 }
 
 //initial value
