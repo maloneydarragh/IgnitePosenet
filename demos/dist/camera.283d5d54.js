@@ -60525,8 +60525,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const videoWidth = 600;
-const videoHeight = 500;
+const videoWidth = 1200;
+const videoHeight = 800;
+var leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const stats = new _stats.default();
 
 function isAndroid() {
@@ -60684,11 +60686,12 @@ function setupFPS() {
 
   document.body.appendChild(stats.dom);
 }
+
+var personNoseXArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 /**
  * Feeds an image to posenet to estimate poses - this is where the magic
  * happens. This function loops with a requestAnimationFrame method.
  */
-
 
 function detectPoseInRealTime(video, net) {
   const canvas = document.getElementById('output');
@@ -60727,8 +60730,8 @@ function detectPoseInRealTime(video, net) {
         break;
 
       case 'multi-pose':
-        poses = await guiState.net.estimateMultiplePoses(video, imageScaleFactor, flipHorizontal, outputStride, guiState.multiPoseDetection.maxPoseDetections, guiState.multiPoseDetection.minPartConfidence, guiState.multiPoseDetection.nmsRadius);
-        console.log('Poses:', poses);
+        poses = await guiState.net.estimateMultiplePoses(video, imageScaleFactor, flipHorizontal, outputStride, guiState.multiPoseDetection.maxPoseDetections, guiState.multiPoseDetection.minPartConfidence, guiState.multiPoseDetection.nmsRadius); //console.log('Poses:', poses);
+
         minPoseConfidence = +guiState.multiPoseDetection.minPoseConfidence;
         minPartConfidence = +guiState.multiPoseDetection.minPartConfidence;
         break;
@@ -60742,20 +60745,20 @@ function detectPoseInRealTime(video, net) {
       ctx.translate(-videoWidth, 0);
       ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
       ctx.restore();
-    }
-
-    console.log("************** POSES: *******************");
-    console.log("****  poses count: " + poses.length);
-    console.log(poses); // For each pose (i.e. person) detected in an image, loop through the poses
+    } //console.log("************** POSES: *******************");
+    // console.log("****  poses count: " + poses.length);
+    //console.log(poses);
+    // For each pose (i.e. person) detected in an image, loop through the poses
     // and draw the resulting skeleton and keypoints if over certain confidence
     // scores
+
 
     var index = 0; //array of colors, so each person has a different color
 
     var colors = ['orange', 'purple', 'blue', 'green', 'white', 'pink', 'brown', 'black'];
     /*
-        need to keep track of individuals, so need to keep track of x position of certain keypoints
-     */
+       need to keep track of individuals, so need to keep track of x position of certain keypoints
+    */
 
     var personArray = [];
     poses.forEach(({
@@ -60768,19 +60771,41 @@ function detectPoseInRealTime(video, net) {
         }
 
         if (guiState.output.showSkeleton) {
-          //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
-          let colorrr = checkIfSomeoneHasFallen(keypoints);
-          (0, _demo_util.drawSkeleton)(colors[index], keypoints, minPartConfidence, ctx);
-          index++; //** AOS log out keypoints before they are drawn
-          //console.log("** keypoints: 0: " + keypoints[0].position.x + "," + + keypoints[0].position.y + "," + keypoints[0].part + "," + keypoints[0].score);
+          //for each x co-ordinate, check against existing values
+          var currentNoseX = keypoints[0].position.x; //should be nose
+          //if first time value stored
 
-          /*console.log("** keypoints:" + keypoints[1].position.x + "," + + keypoints[1].position.y + "," + keypoints[1].part + "," + keypoints[1].score);
-          console.log("** keypoints:" + keypoints[2].position.x + "," + + keypoints[2].position.y + "," + keypoints[2].part + "," + keypoints[2].score);
-          console.log("** keypoints:" + keypoints[3].position.x + "," + + keypoints[3].position.y + "," + keypoints[3].part + "," + keypoints[3].score);
-          console.log("** keypoints:" + keypoints[4].position.x + "," + + keypoints[4].position.y + "," + keypoints[4].part + "," + keypoints[4].score);
-          console.log("** keypoints:" + keypoints[5].position.x + "," + + keypoints[5].position.y + "," + keypoints[5].part + "," + keypoints[5].score);
-          console.log("** keypoints:" + keypoints[6].position.x + "," + + keypoints[6].position.y + "," + keypoints[6].part + "," + keypoints[6].score);*/
-          //**
+          if (personNoseXArray[index] === 0) {
+            personNoseXArray[index] = currentNoseX;
+            (0, _demo_util.drawSkeleton)(colors[index], keypoints, minPartConfidence, ctx);
+            console.log("**  NEW ***: " + currentNoseX);
+          } else {
+            if (checkIfValueWithinRange(currentNoseX, personNoseXArray[index], 50)) {
+              console.log("**  LESS THAN RANGE ***: " + personNoseXArray[index] + " , " + currentNoseX + " , " + Math.abs(personNoseXArray[index] - currentNoseX));
+              personNoseXArray[index] = currentNoseX; //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
+
+              if (checkIfSomeoneHasFallen(keypoints)) {
+                (0, _demo_util.drawSkeleton)(colors[index], keypoints, minPartConfidence, ctx);
+              } else {
+                (0, _demo_util.drawSkeleton)('red', keypoints, minPartConfidence, ctx);
+                document.getElementById("alertAudio").play();
+              }
+            } else {
+              console.log("**  GREATER THAN RANGE ***: " + personNoseXArray[index] + " , " + currentNoseX + " , " + Math.abs(personNoseXArray[index] - currentNoseX));
+              personNoseXArray[index] = currentNoseX; //drawSkeleton('white',keypoints, minPartConfidence, ctx);
+              //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
+
+              if (checkIfSomeoneHasFallen(keypoints)) {
+                (0, _demo_util.drawSkeleton)(colors[index], keypoints, minPartConfidence, ctx);
+              } else {
+                (0, _demo_util.drawSkeleton)('red', keypoints, minPartConfidence, ctx);
+                document.getElementById("alertAudio").play();
+              }
+            }
+          } //drawSkeleton(colorrr,keypoints, minPartConfidence, ctx);
+
+
+          index++;
         }
 
         if (guiState.output.showBoundingBox) {
@@ -60800,26 +60825,35 @@ function detectPoseInRealTime(video, net) {
 var nosePosition = 0; //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
 
 function checkIfSomeoneHasFallen(keypoints) {
-  //track nose y position
-  if (keypoints[1].part === "leftEye") {
-    //console.log("** Yes, it's a eye, I concur");
-    if (nosePosition === 0) {
-      console.log("SETTING leftEyePosition");
-      nosePosition = keypoints[1].position.y;
-    } else {
-      console.log(" saved: " + nosePosition + " , current " + keypoints[1].position.y);
+  const leftShoulder = keypoints[5];
+  const rightShoulder = keypoints[6];
 
-      if (nosePosition > keypoints[1].position.y) {
-        console.log("***** Y value is greater of eye ****");
-        nosePosition = keypoints[1].position.y;
-        return 'red';
-      } else {
-        nosePosition = keypoints[1].position.y;
-        return 'green';
-      }
+  if (leftShoulder.score > 0.1) {
+    // console.log('left shoulder is detected');
+    leftShoulderArray = leftShoulderArray.slice(1);
+    leftShoulderArray = leftShoulderArray.concat(leftShoulder.position.y);
+
+    if (leftShoulderArray[9] - leftShoulderArray[0] > 200 && leftShoulderArray[0] !== 0) {
+      return false;
     }
+  } else if (rightShoulder.score > 0.1) {
+    // console.log('right shoulder is detected');
+    rightShoulderArray = rightShoulderArray.slice(1);
+    rightShoulderArray = rightShoulderArray.concat(rightShoulder.position.y);
+
+    if (rightShoulderArray[9] - rightShoulderArray[0] > 200 && rightShoulderArray[0] !== 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function checkIfValueWithinRange(firstValue, secondValue, range) {
+  if (Math.abs(firstValue - secondValue) < range) {
+    return true;
   } else {
-    console.log("** No, no nose, I knows");
+    return false;
   }
 }
 
