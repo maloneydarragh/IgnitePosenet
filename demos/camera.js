@@ -97,14 +97,6 @@ function setupGui(cameras, net) {
     }
 }
 
-/**
- * Sets up a frames per second panel on the top-left of the window
- */
-function setupFPS() {
-  stats.showPanel(0);  // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.body.appendChild(stats.dom);
-}
-
 
 var personNoseXArray = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
@@ -326,8 +318,6 @@ export async function bindPage() {
     throw e;
   }
 
-  setupGui([], net);
-  //setupFPS();
   detectPoseInRealTime(video, net);
 }
 
