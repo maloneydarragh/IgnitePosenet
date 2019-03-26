@@ -207,16 +207,10 @@ function detectPoseInRealTime(video, net) {
                     drawSkeleton('green',keypoints, minPartConfidence, ctx);
                 }else{
                     drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                    if(document.getElementsByClassName("toast").length===0){
+                    /*if(document.getElementsByClassName("toast").length===0){
                         toastr.error("No!!! People falling!!!", "Warning");
-                    }
-
-                    var div = document.createElement('div');
-
-                    div.innerHTML =
-                        '<h4>Someone has fallen</h4>';
-                    document.getElementById('alerts').appendChild(div);
-
+                    }*/
+                    addAlert();
 
                     leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -237,6 +231,19 @@ function detectPoseInRealTime(video, net) {
   }
 
     poseDetectionFrame();
+}
+
+//add alert to screen by appending HTML
+function addAlert(){
+
+    var currentdate = new Date();
+    var datetime = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/" + currentdate.getFullYear() + " " + currentdate.getHours() + ":"  + currentdate.getMinutes() + ":"  + currentdate.getSeconds();
+
+    var div = document.createElement('div');
+
+    div.innerHTML =
+        '<div class="alert-panel"><h4>Someone has fallen</h4>' + datetime + '</div>';
+    document.getElementById('alerts').appendChild(div);
 }
 
 //initial value
