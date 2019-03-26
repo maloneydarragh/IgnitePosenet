@@ -11,14 +11,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="css/liberty.css">
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
-    <title>Camera Feed Demo</title>
+    <title>LM</title>
 </head>
 
-<body>
+<body  class="body-bg">
 <header>
     <!-- Fixed navbar -->
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark navbar-bg-color">
-        <a class="navbar-brand navbar-title-color" href="#">Fall Detector</a>
+        <a class="navbar-brand navbar-title-color" href="#"><h2><strong>Liberty Mutual</strong> - Risk Control Services Dashboard</h2></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -44,20 +44,45 @@
 <audio id="alertAudio" src="alert.mp3" preload="auto"></audio>
 <div id="info" style='display:none'>
 </div>
-<div id="loading">
-    Loading the model...
-</div>
 
-<div id='main' style='display:none'>
-    <video id="video" playsinline style=" -moz-transform: scaleX(-1);
-        -o-transform: scaleX(-1);
-        -webkit-transform: scaleX(-1);
-        transform: scaleX(-1);
-        display: none;
-        ">
-    </video>
-    <canvas id="output" />
-</div>
+
+<!-- Services -->
+<section id="services">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <div id="loading">
+                    <br><br><br><h1>Live Video Stream</h1>
+                </div>
+                <br><br><br><br>
+
+                <!--<img src="https://img.icons8.com/ios/30/1A1446/documentary.png" style="float:left;">-->
+                <h4>Live Video Stream</h4>
+
+                <div id='main' style='display:none'>
+                    <video id="video" playsinline style=" -moz-transform: scaleX(-1);
+                            -o-transform: scaleX(-1);
+                            -webkit-transform: scaleX(-1);
+                            transform: scaleX(-1);
+                            display: none;
+                            ">
+                    </video>
+                    <canvas id="output" />
+                </div>
+            </div>
+            <div class="col-lg-4 teal-bg">
+                    <br><br><br><br><h4>ALERTS</h4>
+                <div id="alerts">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
 
 <script src="camera.js"></script>
 <!-- Optional JavaScript -->

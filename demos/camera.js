@@ -210,6 +210,14 @@ function detectPoseInRealTime(video, net) {
                     if(document.getElementsByClassName("toast").length===0){
                         toastr.error("No!!! People falling!!!", "Warning");
                     }
+
+                    var div = document.createElement('div');
+
+                    div.innerHTML =
+                        '<h4>Someone has fallen</h4>';
+                    document.getElementById('alerts').appendChild(div);
+
+
                     leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 }
