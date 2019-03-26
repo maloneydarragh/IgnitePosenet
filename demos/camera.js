@@ -233,7 +233,6 @@ function detectPoseInRealTime(video, net) {
                               drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
                           }else{
                               drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                              // toastr.error("No!!! People falling!!!", "Warning");
                               // document.getElementById("alertAudio").play();
                               leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                               rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -249,7 +248,6 @@ function detectPoseInRealTime(video, net) {
                               drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
                           }else{
                               drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                              // toastr.error("No!!! People falling!!!", "Warning");
                               // document.getElementById("alertAudio").play();
                               leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                               rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

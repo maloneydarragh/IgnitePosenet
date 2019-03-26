@@ -213,7 +213,6 @@ function detectPoseInRealTime(video, net) {
                 drawKeypoints(keypoints, minPartConfidence, ctx);
             }
             if (guiState.output.showSkeleton) {
-
                 //for each x co-ordinate, check against existing values
                 var currentNoseX = keypoints[0].position.x;  //should be nose
 
@@ -232,7 +231,9 @@ function detectPoseInRealTime(video, net) {
                             drawSkeleton('green',keypoints, minPartConfidence, ctx);
                         }else{
                             drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                            toastr.error("No!!! People falling!!!", "Warning");
+                            if(document.getElementsByClassName("toast").length===0){
+                                toastr.error("No!!! People falling!!!", "Warning");
+                            }
                             leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                             rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         }
@@ -247,16 +248,14 @@ function detectPoseInRealTime(video, net) {
                             drawSkeleton('green',keypoints, minPartConfidence, ctx);
                         }else{
                             drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                            toastr.error("No!!! People falling!!!", "Warning");
+                            if(document.getElementsByClassName("toast").length===0){
+                                toastr.error("No!!! People falling!!!", "Warning");
+                            }
                             leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                             rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         }
                     }
                 }
-
-
-
-
                 //drawSkeleton(colorrr,keypoints, minPartConfidence, ctx);
                 index++;
 
