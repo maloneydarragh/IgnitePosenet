@@ -6,3 +6,19 @@
 .navbar-title-color{
     color: #1A1446 !important;
 }
+
+.body-bg{
+    background-color: #F5F5F5 !important;
+}
+
+.teal-bg{
+    background-color: #F0FBFC !important;
+}
+
+.alert-panel{
+    background-color: #b21f2d !important;
+    padding: 5px;
+    margin-top: 5px;
+    color: white;
+    width: 350px;
+}
