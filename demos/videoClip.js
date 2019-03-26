@@ -211,7 +211,7 @@ function detectPoseInRealTime(video, net) {
 
                         //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
                         if (checkIfSomeoneHasFallen(keypoints)){
-                            drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
+                            drawSkeleton('green',keypoints, minPartConfidence, ctx);
                         }else{
                             drawSkeleton('red',keypoints, minPartConfidence, ctx);
                         }
@@ -223,7 +223,7 @@ function detectPoseInRealTime(video, net) {
                         //drawSkeleton('white',keypoints, minPartConfidence, ctx);
                         //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
                         if (checkIfSomeoneHasFallen(keypoints)){
-                            drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
+                            drawSkeleton('green',keypoints, minPartConfidence, ctx);
                         }else{
                             drawSkeleton('red',keypoints, minPartConfidence, ctx);
                         }
@@ -265,7 +265,7 @@ function checkIfSomeoneHasFallen(keypoints){
         // console.log('left shoulder is detected');
         leftShoulderArray = leftShoulderArray.slice(1);
         leftShoulderArray = leftShoulderArray.concat(leftShoulder.position.y);
-        if(leftShoulderArray[9]-leftShoulderArray[0]>200 && leftShoulderArray[0] !== 0){
+        if(leftShoulderArray[9]-leftShoulderArray[0]>100 && leftShoulderArray[0] !== 0){
             return false;
         }
     }
@@ -273,7 +273,7 @@ function checkIfSomeoneHasFallen(keypoints){
         // console.log('right shoulder is detected');
         rightShoulderArray = rightShoulderArray.slice(1);
         rightShoulderArray = rightShoulderArray.concat(rightShoulder.position.y);
-        if(rightShoulderArray[9]-rightShoulderArray[0]>200 && rightShoulderArray[0] !==0){
+        if(rightShoulderArray[9]-rightShoulderArray[0]>100 && rightShoulderArray[0] !==0){
             return false;
         }
     }
