@@ -187,88 +187,40 @@ function detectPoseInRealTime(video, net) {
       ctx.restore();
     }
 
-      //console.log("************** POSES: *******************");
-     // console.log("****  poses count: " + poses.length);
-      //console.log(poses);
-
-      // For each pose (i.e. person) detected in an image, loop through the poses
-      // and draw the resulting skeleton and keypoints if over certain confidence
-      // scores
-
       var  index = 0;
 
       //array of colors, so each person has a different color
       var colors = ['orange','purple','blue','green','white','pink','brown','black'];
 
 
-      /*
-         need to keep track of individuals, so need to keep track of x position of certain keypoints
-      */
-      var personArray = [];
-
-      poses.forEach(({score, keypoints}) => {
-
-          if (score >= minPoseConfidence) {
-              drawPersonTag(colors[index],keypoints, ctx, index);
-              if (guiState.output.showPoints) {
-                  drawKeypoints(keypoints, minPartConfidence, ctx);
-              }
-              if (guiState.output.showSkeleton) {
-
-                  //for each x co-ordinate, check against existing values
-                  var currentNoseX = keypoints[0].position.x;  //should be nose
-
-                  //if first time value stored
-                  if (personNoseXArray[index] === 0){
-                      personNoseXArray[index] = currentNoseX;
-                      drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
-                      console.log("**  NEW ***: " + currentNoseX);
-                  }else{
-                      if (checkIfValueWithinRange(currentNoseX, personNoseXArray[index], 50)){
-                          console.log("**  LESS THAN RANGE ***: " + personNoseXArray[index] + " , " + currentNoseX +  " , " + Math.abs(personNoseXArray[index] - currentNoseX));
-                          personNoseXArray[index] = currentNoseX;
-
-                          //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
-                          if (checkIfSomeoneHasFallen(keypoints)){
-                              drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
-                          }else{
-                              drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                              // document.getElementById("alertAudio").play();
-                              leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                              rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                          }
+        poses.forEach(({score, keypoints}) => {
+            if (score >= minPoseConfidence) {
+            drawPersonTag(colors[index],keypoints, ctx, index);
+            if (guiState.output.showPoints) {
+                drawKeypoints(keypoints, minPartConfidence, ctx);
+            }
+            if (guiState.output.showSkeleton) {
 
 
-                      }else{
-                          console.log("**  GREATER THAN RANGE ***: " + personNoseXArray[index] + " , " + currentNoseX +  " , " + Math.abs(personNoseXArray[index] - currentNoseX));
-                          personNoseXArray[index] = currentNoseX;
-                          //drawSkeleton('white',keypoints, minPartConfidence, ctx);
-                          //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
-                          if (checkIfSomeoneHasFallen(keypoints)){
-                              drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
-                          }else{
-                              drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                              // document.getElementById("alertAudio").play();
-                              leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                              rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                          }
-                      }
-                  }
+                //check if a keypoint's position is lower than a percentage (tbc), if so draw big red lines
+                if (checkIfSomeoneHasFallen(keypoints)){
+                    drawSkeleton('green',keypoints, minPartConfidence, ctx);
+                }else{
+                    drawSkeleton('red',keypoints, minPartConfidence, ctx);
+                    if(document.getElementsByClassName("toast").length===0){
+                        toastr.error("No!!! People falling!!!", "Warning");
+                    }
+                    leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                }
+                index++;
+            }
+            if (guiState.output.showBoundingBox) {
+                drawBoundingBox(keypoints, ctx);
+            }
+        }
 
-
-
-
-                  //drawSkeleton(colorrr,keypoints, minPartConfidence, ctx);
-                  index++;
-
-
-
-              }
-              if (guiState.output.showBoundingBox) {
-                  drawBoundingBox(keypoints, ctx);
-              }
-          }
-      });
+    });
 
       // End monitoring code for frames per second
       stats.end();
@@ -305,15 +257,6 @@ function checkIfSomeoneHasFallen(keypoints){
 
     return true;
 }
-
-function checkIfValueWithinRange(firstValue, secondValue, range){
-    if ((Math.abs(firstValue - secondValue) < range)) {
-        return true;
-    }else{
-        return false;
-    }
-}
-
 
 /**
  * Kicks off the demo by loading the posenet model, finding and loading
