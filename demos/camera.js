@@ -2,12 +2,30 @@ import * as posenet from '@tensorflow-models/posenet';
 import Stats from 'stats.js';
 
 import {drawBoundingBox, drawKeypoints, drawPersonTag, drawSkeleton} from './demo_util';
+import toastr from 'toastr';
 
 const videoWidth = 1200;
 const videoHeight = 800;
 var leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 var rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const stats = new Stats();
+toastr.options = {
+    "closeButton": false,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
@@ -215,7 +233,10 @@ function detectPoseInRealTime(video, net) {
                               drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
                           }else{
                               drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                              document.getElementById("alertAudio").play();
+                              // toastr.error("No!!! People falling!!!", "Warning");
+                              // document.getElementById("alertAudio").play();
+                              leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                              rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                           }
 
 
@@ -228,7 +249,10 @@ function detectPoseInRealTime(video, net) {
                               drawSkeleton(colors[index],keypoints, minPartConfidence, ctx);
                           }else{
                               drawSkeleton('red',keypoints, minPartConfidence, ctx);
-                              document.getElementById("alertAudio").play();
+                              // toastr.error("No!!! People falling!!!", "Warning");
+                              // document.getElementById("alertAudio").play();
+                              leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                              rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                           }
                       }
                   }

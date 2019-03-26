@@ -2,12 +2,30 @@ import * as posenet from '@tensorflow-models/posenet';
 import Stats from 'stats.js';
 
 import {drawBoundingBox, drawKeypoints, drawPersonTag, drawSkeleton} from './demo_util';
+import toastr from "toastr";
 
 const videoWidth = 600;
 const videoHeight = 500;
 var leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 var rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const stats = new Stats();
+toastr.options = {
+    "closeButton": false,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 
 function isAndroid() {
     return /Android/i.test(navigator.userAgent);
@@ -214,6 +232,9 @@ function detectPoseInRealTime(video, net) {
                             drawSkeleton('green',keypoints, minPartConfidence, ctx);
                         }else{
                             drawSkeleton('red',keypoints, minPartConfidence, ctx);
+                            toastr.error("No!!! People falling!!!", "Warning");
+                            leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                            rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         }
 
 
@@ -226,6 +247,9 @@ function detectPoseInRealTime(video, net) {
                             drawSkeleton('green',keypoints, minPartConfidence, ctx);
                         }else{
                             drawSkeleton('red',keypoints, minPartConfidence, ctx);
+                            toastr.error("No!!! People falling!!!", "Warning");
+                            leftShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                            rightShoulderArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         }
                     }
                 }
