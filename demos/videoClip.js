@@ -280,7 +280,7 @@ function detectPoseInRealTime(video, net) {
 
 //update people counter
 function updatePeopleCounter(numberOfPeople){
-    document.getElementById('counter').innerHTML = numberOfPeople;
+    document.getElementById('counter').innerHTML = '<h4>' + numberOfPeople + '</h4>';
 }
 
 //initial value
