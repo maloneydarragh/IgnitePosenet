@@ -247,7 +247,7 @@ function detectPoseInRealTime(video, net) {
 
         poses.forEach(({score, keypoints}) => {
             if (score >= minPoseConfidence) {
-            drawPersonTag(colors[index],keypoints, ctx, index);
+            //drawPersonTag(colors[index],keypoints, ctx, index);
             if (guiState.output.showPoints) {
                 drawKeypoints(keypoints, minPartConfidence, ctx);
             }

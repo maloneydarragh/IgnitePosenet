@@ -204,7 +204,7 @@ function detectPoseInRealTime(video, net) {
 
         poses.forEach(({score, keypoints}) => {
             if (score >= minPoseConfidence) {
-                drawPersonTag(colors[index],keypoints, ctx, index);
+                //drawPersonTag(colors[index],keypoints, ctx, index);
             if (guiState.output.showPoints) {
                 drawKeypoints(keypoints, minPartConfidence, ctx);
             }
@@ -296,7 +296,7 @@ function addAlert(){
         var datetime = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/" + currentdate.getFullYear() + " " + currentdate.getHours() + ":"  + currentdate.getMinutes() + ":"  + currentdate.getSeconds();
         var div = document.createElement('div');
         div.innerHTML =
-            '<div class="alert-panel"><h4>Someone has fallen</h4>' + datetime + '</div>';
+            '<div class="alert-panel-video"><h4>Someone has fallen</h4>' + datetime + '</div>';
         document.getElementById('notification').appendChild(div);
         alertTimer = 5;
         myVar = setInterval(myTimer, 1000);
