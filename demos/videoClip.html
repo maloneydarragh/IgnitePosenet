@@ -9,7 +9,15 @@
     <title>Video</title>
 </head>
 <body>
-   Video Page
+<header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark navbar-bg-color">
+        <a class="navbar-brand navbar-title-color" href="#"><h2><strong>Liberty Mutual</strong> - Risk Control Services Dashboard</h2></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+</header>
 <br/>
 
    <!-- Services -->
@@ -17,18 +25,16 @@
        <div class="container-fluid">
            <div class="row">
                <div class="col-lg-4">
-                   <br><br><br><br>
-                   <h4>Live Video Stream</h4>
-                   <video id="videoClip" width="600" height="500" controls autoplay>
+                   <video id="videoClip" width="480" height="400" controls autoplay>
                        <source src="recordedVideos/groupFall.MOV" type="video/mp4">
                        Your browser does not support the video tag.
                    </video>
                </div>
                <div class="col-lg-4">
-                   <canvas id="output" width="800" height="600"/>
+                   <canvas id="output" width="480" height="400"/>
                </div>
                <div class="col-lg-4 teal-bg">
-                   <br><br><br><br><h4>Notifications</h4>
+                   <br><br><br></bbr><h4>Notifications</h4>
                    <div id="notification">
                        <div class="counter-panel"><h4>Number of People:</h4><div id="counter"><h4>0</h4></div></div>
                    </div>
