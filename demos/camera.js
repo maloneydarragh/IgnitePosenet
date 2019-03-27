@@ -32,6 +32,50 @@ var alertTimer = 0;
 var myVar;
 var timerInterval = 5;
 
+
+var AWS = require('aws-sdk');
+AWS.config.region = 'us-east-1'; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'us-east-1:c48a9eab-246b-4fc9-b023-bd39ae1f0032',
+});
+
+const htmlBody = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+      </head>
+      <body>
+        <p>Someone has fallen!</p>
+      </body>
+    </html>
+  `;
+
+const params = {
+    Destination: {
+        ToAddresses: [
+            'darragh.maloney@liberty-it.co.uk',
+        ]
+    },
+    Message: {
+        Body: {
+            Html: {
+                Charset: "UTF-8",
+                Data: htmlBody
+            },
+            Text: {
+                Charset: "UTF-8",
+                Data: "Someone has fallen!"
+            }
+        },
+        Subject: {
+            Charset: 'UTF-8',
+            Data: 'Warning: Someone has fallen!'
+        }
+    },
+    Source: 'yamin.xue@liberty-it.co.uk',
+};
+
+
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
@@ -212,6 +256,7 @@ function detectPoseInRealTime(video, net) {
                     drawSkeleton('green',keypoints, minPartConfidence, ctx);
                 }else{
                     drawSkeleton('red',keypoints, minPartConfidence, ctx);
+
                     /*if(document.getElementsByClassName("toast").length===0){
                         toastr.error("No!!! People falling!!!", "Warning");
                     }*/
@@ -246,9 +291,23 @@ function addAlert(){
         var div = document.createElement('div');
         div.innerHTML =
             '<div class="alert-panel"><h4>Someone has fallen</h4>' + datetime + '</div>';
-        document.getElementById('alerts').appendChild(div);
+        document.getElementById('notification').appendChild(div);
         alertTimer = timerInterval;
         myVar = setInterval(myTimer, 1000);
+
+        var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+        sendPromise
+            .then(data => {
+                var infoDiv = document.createElement('div');
+                infoDiv.innerHTML =
+                    '<div class="info-panel"><h4>The alert email is sent successfully.</h4>' + datetime + '</div>';
+                document.getElementById('notification').appendChild(infoDiv);
+            })
+            .catch(err => {
+                console.error('Alert email sent failed', err, err.stack);
+            });
+
     }
 }
 

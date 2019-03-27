@@ -22,3 +22,11 @@
     color: white;
     width: 350px;
 }
+
+.info-panel{
+    background-color: lightgreen !important;
+    padding: 5px;
+    margin-top: 5px;
+    color: white;
+    width: 350px;
+}
