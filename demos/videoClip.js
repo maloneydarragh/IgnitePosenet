@@ -1,6 +1,6 @@
 import * as posenet from '@tensorflow-models/posenet';
 import Stats from 'stats.js';
-
+import html2canvas from 'html2canvas';
 import {drawBoundingBox, drawKeypoints, drawPersonTag, drawSkeleton} from './demo_util';
 import toastr from "toastr";
 
@@ -37,43 +37,6 @@ AWS.config.region = 'us-east-1'; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: 'us-east-1:c48a9eab-246b-4fc9-b023-bd39ae1f0032',
 });
-
-const htmlBody = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-      </head>
-      <body>
-        <p>Someone has fallen!</p>
-      </body>
-    </html>
-  `;
-
-const params = {
-    Destination: {
-        ToAddresses: [
-            'darragh.maloney@liberty-it.co.uk',
-        ]
-    },
-    Message: {
-        Body: {
-            Html: {
-                Charset: "UTF-8",
-                Data: htmlBody
-            },
-            Text: {
-                Charset: "UTF-8",
-                Data: "Someone has fallen!"
-            }
-        },
-        Subject: {
-            Charset: 'UTF-8',
-            Data: 'Warning: Someone has fallen!'
-        }
-    },
-    Source: 'yamin.xue@liberty-it.co.uk',
-};
-
 
 function isAndroid() {
     return /Android/i.test(navigator.userAgent);
@@ -311,6 +274,21 @@ function checkIfSomeoneHasFallen(keypoints){
 }
 
 
+const htmlBody = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+      </head>
+      <body>
+        <p>Someone has fallen!</p>
+      </body>
+    </html>
+  `;
+
+const desEmail = 'darragh.maloney@liberty-it.co.uk';
+const srcEmail = 'yamin.xue@liberty-it.co.uk';
+var ses_image;
+
 //add alert to screen by appending HTML
 function addAlert(){
     if (alertTimer === 0) {
@@ -323,19 +301,48 @@ function addAlert(){
         alertTimer = 5;
         myVar = setInterval(myTimer, 1000);
 
-        var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+        html2canvas(document.querySelector("#output")).then(canvas => {
 
-        sendPromise
-            .then(data => {
-                var infoDiv = document.createElement('div');
-                infoDiv.innerHTML =
-                    '<div class="info-panel"><h4>The alert email was sent successfully.</h4>' + datetime + '</div>';
-                document.getElementById('notification').appendChild(infoDiv);
-            })
-            .catch(err => {
-                console.error('Alert email sent failed', err, err.stack);
-            });
+            ses_image = canvas.toDataURL('image/jpeg', 1.0);
 
+            var ses_mail = "From: " + srcEmail + "\n";
+            ses_mail += "To: " + desEmail + "\n";
+            ses_mail += "Subject: Warning: Someone has fallen!\n";
+            ses_mail += "MIME-Version: 1.0\n";
+            ses_mail += "Content-Type: multipart/mixed; boundary=\"NextPart\"\n\n";
+            ses_mail += "--NextPart\n";
+            ses_mail += "Content-Type: text/html; charset=us-ascii\n\n";
+            ses_mail += "Warning: Someone has fallen! Please see the attachment.\n\n";
+            ses_mail += "--NextPart\n";
+            ses_mail += "Content-Type: image/jpeg; \n";
+            ses_mail += "Content-Disposition: attachment; filename=\"someoneHasFallen.jpg\"\n";
+            ses_mail += "Content-Transfer-Encoding: base64\n\n";
+            ses_mail += ses_image.slice(23);
+            ses_mail += "--NextPart--";
+
+            const params = {
+                Destinations: [
+                    desEmail,
+                ],
+                Source: srcEmail,
+                RawMessage: {
+                    Data: ses_mail
+                }
+            };
+
+            var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendRawEmail(params).promise();
+
+            sendPromise
+                .then(data => {
+                    var infoDiv = document.createElement('div');
+                    infoDiv.innerHTML =
+                        '<div class="info-panel"><h4>The alert email was sent successfully.</h4>' + datetime + '</div>';
+                    document.getElementById('notification').appendChild(infoDiv);
+                })
+                .catch(err => {
+                    console.error('Alert email sent failed', err);
+                });
+        });
     }
 }
 
