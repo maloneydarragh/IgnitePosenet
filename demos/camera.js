@@ -312,7 +312,7 @@ function addAlert(){
             .then(data => {
                 var infoDiv = document.createElement('div');
                 infoDiv.innerHTML =
-                    '<div class="info-panel"><h4>The alert email is sent successfully.</h4>' + datetime + '</div>';
+                    '<div class="info-panel"><h4>The alert email was sent successfully.</h4>' + datetime + '</div>';
                 document.getElementById('notification').appendChild(infoDiv);
             })
             .catch(err => {

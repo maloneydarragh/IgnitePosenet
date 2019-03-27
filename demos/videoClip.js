@@ -266,6 +266,9 @@ function detectPoseInRealTime(video, net) {
 
     });
 
+        updatePeopleCounter(index);
+        index = 0;
+
         // End monitoring code for frames per second
         stats.end();
 
@@ -273,6 +276,11 @@ function detectPoseInRealTime(video, net) {
     }
 
     poseDetectionFrame();
+}
+
+//update people counter
+function updatePeopleCounter(numberOfPeople){
+    document.getElementById('counter').innerHTML = numberOfPeople;
 }
 
 //initial value
@@ -321,7 +329,7 @@ function addAlert(){
             .then(data => {
                 var infoDiv = document.createElement('div');
                 infoDiv.innerHTML =
-                    '<div class="info-panel"><h4>The alert email is sent successfully.</h4>' + datetime + '</div>';
+                    '<div class="info-panel"><h4>The alert email was sent successfully.</h4>' + datetime + '</div>';
                 document.getElementById('notification').appendChild(infoDiv);
             })
             .catch(err => {
