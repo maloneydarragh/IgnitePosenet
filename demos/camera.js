@@ -32,7 +32,6 @@ var alertTimer = 0;
 var myVar;
 var timerInterval = 5;
 
-
 var AWS = require('aws-sdk');
 AWS.config.region = 'us-east-1'; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
@@ -75,6 +74,8 @@ const params = {
     Source: 'yamin.xue@liberty-it.co.uk',
 };
 
+//to track whether we've alerted on number of people in scene
+var numberOfPeopleInView = 0;
 
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
@@ -139,7 +140,7 @@ const guiState = {
     minPartConfidence: 0.5,
   },
   multiPoseDetection: {
-    maxPoseDetections: 5,
+    maxPoseDetections: 100,
     minPoseConfidence: 0.15,
     minPartConfidence: 0.1,
     nmsRadius: 30.0,
@@ -242,6 +243,8 @@ function detectPoseInRealTime(video, net) {
       var colors = ['orange','purple','blue','green','white','pink','brown','black'];
 
 
+
+
         poses.forEach(({score, keypoints}) => {
             if (score >= minPoseConfidence) {
             drawPersonTag(colors[index],keypoints, ctx, index);
@@ -274,6 +277,9 @@ function detectPoseInRealTime(video, net) {
 
     });
 
+        updatePeopleCounter(index);
+        index = 0;
+
       // End monitoring code for frames per second
       stats.end();
 
@@ -281,6 +287,11 @@ function detectPoseInRealTime(video, net) {
   }
 
     poseDetectionFrame();
+}
+
+//update people counter
+function updatePeopleCounter(numberOfPeople){
+    document.getElementById('counter').innerHTML = numberOfPeople;
 }
 
 //add alert to screen by appending HTML
